@@ -91,7 +91,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     popupBtn.forEach(elem => elem.addEventListener("click", () => {
-      if (window.innerWidth >= 768) {
+      if (document.documentElement.clientWidth >= 768) {
         interval = requestAnimationFrame(show);
       }
       popup.style.display = "block";
