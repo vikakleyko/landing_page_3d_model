@@ -29,9 +29,13 @@ window.addEventListener("DOMContentLoaded", () => {
       timerHours.textContent =
         timer.hours.toString().length === 1 ? "0" + timer.hours : timer.hours;
       timerMinutes.textContent =
-        timer.minutes.toString().length === 1 ? "0" + timer.minutes : timer.minutes;
+        timer.minutes.toString().length === 1
+          ? "0" + timer.minutes
+          : timer.minutes;
       timerSeconds.textContent =
-        timer.seconds.toString().length === 1 ? "0" + timer.seconds : timer.seconds;
+        timer.seconds.toString().length === 1
+          ? "0" + timer.seconds
+          : timer.seconds;
     }
 
     let interval = setInterval(updateTimer, 1000);
@@ -44,5 +48,45 @@ window.addEventListener("DOMContentLoaded", () => {
       clearInterval(interval);
     }
   }
-  countTimer("30 june 2020");
+  countTimer("1 july 2020");
+
+  // menu
+  const toggleMenu = () => {
+    const btnMenu = document.querySelector(".menu"),
+      menu = document.querySelector("menu"),
+      closeBtn = document.querySelector(".close-btn"),
+      menuItems = menu.querySelectorAll("ul>li");
+
+    const handleMenu = () => {
+      menu.classList.toggle("active-menu");
+    };
+
+    btnMenu.addEventListener("click", handleMenu);
+    closeBtn.addEventListener("click", handleMenu);
+    menuItems.forEach(item => { 
+      item.addEventListener("click", handleMenu);
+    });
+  };
+
+  toggleMenu();
+
+  // popup
+  const togglePopup = () => {
+    console.log(window.innerWidth);
+
+    const popup = document.querySelector(".popup"),
+    popupBtn = document.querySelectorAll(".popup-btn"),
+    popupClose = document.querySelector(".popup-close");
+
+    popupBtn.forEach(elem => elem.addEventListener("click", () => {
+      popup.style.display = "block";
+    }));
+
+    popupClose.addEventListener("click", () => {
+      popup.style.display = "none";
+    });
+  };
+
+
+  togglePopup();
 });
