@@ -54,20 +54,25 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // menu
   const toggleMenu = () => {
-    const btnMenu = document.querySelector(".menu"),
-      menu = document.querySelector("menu"),
-      menuContainer = document.querySelector("menu");
+    const menu = document.querySelector("menu");
 
     const handleMenu = () => {
       menu.classList.toggle("active-menu");
     };
 
-    btnMenu.addEventListener("click", handleMenu);
-
-    menuContainer.addEventListener("click", event => {
+    document.addEventListener("click", () => {
       let target = event.target;
-      if (target.classList.contains("close-btn") || target.closest("a")) {
+      if (
+        target.classList.contains("close-btn") ||
+        target.closest("a") ||
+        target.closest(".menu")
+      ) {
         handleMenu();
+      } else if (
+        !target.closest("menu") &&
+        menu.classList.contains("active-menu")
+      ) {
+        menu.classList.remove("active-menu");
       }
     });
   };
@@ -93,7 +98,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    popupBtn.forEach(elem =>
+    popupBtn.forEach((elem) =>
       elem.addEventListener("click", () => {
         if (document.documentElement.clientWidth >= 768) {
           interval = requestAnimationFrame(show);
@@ -102,7 +107,7 @@ window.addEventListener("DOMContentLoaded", () => {
       })
     );
 
-    popup.addEventListener("click", event => {
+    popup.addEventListener("click", (event) => {
       let target = event.target;
 
       if (target.classList.contains("popup-close")) {
