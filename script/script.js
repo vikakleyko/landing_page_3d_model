@@ -262,7 +262,7 @@ window.addEventListener("DOMContentLoaded", () => {
   slider();
 
   // replace card on hover
-  const changeImage = event => {
+  const changeImage = (event) => {
     const target = event.target;
     if (target.dataset.img) {
       [target.src, target.dataset.img] = [target.dataset.img, target.src];
@@ -271,7 +271,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const commandPhoto = document.querySelectorAll(".command__photo");
 
-  commandPhoto.forEach(item => {
+  commandPhoto.forEach((item) => {
     item.addEventListener("mouseover", changeImage);
     item.addEventListener("mouseout", changeImage);
   });
@@ -300,54 +300,199 @@ window.addEventListener("DOMContentLoaded", () => {
     calcCount = document.querySelector(".calc-count"),
     calcDay = document.querySelector(".calc-day");
 
-
   calcSquare.addEventListener("input", validate);
   calcCount.addEventListener("input", validate);
   calcDay.addEventListener("input", validate);
 
-
   // calculator
   const calc = (price = 100) => {
-      const calcBlock = document.querySelector(".calc-block"),
+    const calcBlock = document.querySelector(".calc-block"),
       calcType = document.querySelector(".calc-type"),
       calcSquare = document.querySelector(".calc-square"),
       calcDay = document.querySelector(".calc-day"),
       calcCount = document.querySelector(".calc-count"),
       totalValue = document.getElementById("total");
 
-      const countSum = () => {
-        let total = 0,
+    const countSum = () => {
+      let total = 0,
         countValue = 1,
         dayValue = 1;
 
-        const typeValue = calcType.options[calcType.selectedIndex].value,
-          squareValue = +calcSquare.value;
+      const typeValue = calcType.options[calcType.selectedIndex].value,
+        squareValue = +calcSquare.value;
 
-          if (calcCount.value > 1) {
-            countValue += (calcCount.value - 1) / 10;
-            console.log(calcCount.value);
-          }
+      if (calcCount.value > 1) {
+        countValue += (calcCount.value - 1) / 10;
+      }
 
-          if (calcDay.value && calcDay.value < 5) {
-              dayValue *= 2;
-          } else if (calcDay.value && calcDay.value < 10) {
-            dayValue *= 1.5;
-          }
+      if (calcDay.value && calcDay.value < 5) {
+        dayValue *= 2;
+      } else if (calcDay.value && calcDay.value < 10) {
+        dayValue *= 1.5;
+      }
 
-          if (typeValue && squareValue) {
-            total = price * squareValue * typeValue * countValue * dayValue;
-          }
-          totalValue.textContent = Math.floor(total);
-      };
+      if (typeValue && squareValue) {
+        total = price * squareValue * typeValue * countValue * dayValue;
+      }
+      totalValue.textContent = Math.floor(total);
+    };
 
-      calcBlock.addEventListener("change", event => {
-        const target = event.target;
-        if (target.matches("input") || target.matches("select")) {
-          countSum();
-        }
-      });
+    calcBlock.addEventListener("change", (event) => {
+      const target = event.target;
+      if (target.matches("input") || target.matches("select")) {
+        countSum();
+      }
+    });
   };
 
   calc(100);
 
+  // send ajax form
+
+  const sendForm = () => {
+
+  const valideNumber = number =>  {
+    const phonePattern = /^[+]?\d+$/;
+    return !!(number && number.match(phonePattern));
+  };
+
+  const valideText = text =>  {
+    const textPattern = /^[\u0400-\u04FF ]+$/;
+    return !!(text && text.match(textPattern));
+  };
+
+
+    const errorMessage = "Что-то пошло не так...",
+      loadMessage = "Загрузка ...",
+      successMessage = "Cпасибо, мы скоро с вами свяжемся!",
+      invalidInputaMessage = "Проверьте правильность заполнения всех полей";
+
+    const form1 = document.getElementById("form1"),
+      form2 = document.getElementById("form2"),
+      form3 = document.getElementById("form3"),
+      inputName1 = document.getElementById("form1-name"),
+      inputEmail1 = document.getElementById("form1-email"),
+      inputPhone1 = document.getElementById("form1-phone"),
+      inputName2 = document.getElementById("form2-name"),
+      inputEmail2 = document.getElementById("form2-email"),
+      inputPhone2 = document.getElementById("form2-phone"),
+      inputMessage2 = document.getElementById("form2-message"),
+      inputName3 = document.getElementById("form3-name"),
+      inputEmail3 = document.getElementById("form3-email"),
+      inputPhone3 = document.getElementById("form3-phone");
+
+    const statusMessage = document.createElement("div");
+    statusMessage.textContent = "Message!";
+    statusMessage.style.cssText = "font-size-2rem;";
+
+    const postData = (body, outputData, errorData) => {
+      const request = new XMLHttpRequest();
+
+      request.addEventListener("readystatechange", () => {
+        if (request.readyState !== 4) {
+          return;
+        }
+
+        if (request.status === 200) {
+          outputData();
+        } else {
+          errorData(request.status);
+        }
+      });
+
+      request.open("POST", "./server.php");
+      request.setRequestHeader("Content-Type", "application/json");
+      request.send(JSON.stringify(body));
+    };
+
+    form1.addEventListener("submit", event => {
+      event.preventDefault();
+      form1.appendChild(statusMessage);
+      statusMessage.textContent = loadMessage;
+      const formData = new FormData(form1);
+      let body = {};
+
+      for (let val of formData.entries()) {
+        body[val[0]] = val[1];
+      }
+
+      if (valideNumber(inputPhone1.value) && valideText(inputName1.value)) {
+        postData(body,
+          () => {
+            statusMessage.textContent = successMessage;
+          },
+          error => {
+            statusMessage.textContent = errorMessage;
+            console.error(error);
+          }
+        );
+        inputName1.value = "";
+        inputEmail1.value = "";
+        inputPhone1.value = "";
+      } else {
+        statusMessage.textContent = invalidInputaMessage;
+      }
+    });
+
+    form2.addEventListener("submit", event => {
+      event.preventDefault();
+      form2.appendChild(statusMessage);
+      statusMessage.textContent = loadMessage;
+      const formData = new FormData(form2);
+      let body = {};
+
+      for (let val of formData.entries()) {
+        body[val[0]] = val[1];
+      }
+      if (valideNumber(inputPhone2.value) && valideText(inputName2.value) && valideText(inputMessage2.value)) {
+        postData(body,
+          () => {
+            statusMessage.textContent = successMessage;
+          },
+          error => {
+            statusMessage.textContent = errorMessage;
+            console.error(error);
+          }
+        );
+        inputName2.value = "";
+        inputEmail2.value = "";
+        inputPhone2.value = "";
+        inputMessage2.value = "";
+      } else {
+        statusMessage.textContent = invalidInputaMessage;
+      }
+    });
+
+    form3.addEventListener("submit", event => {
+      event.preventDefault();
+      statusMessage.style.color = "white";
+      form3.appendChild(statusMessage);
+      statusMessage.textContent = loadMessage;
+      const formData = new FormData(form3);
+      let body = {};
+
+      for (let val of formData.entries()) {
+        body[val[0]] = val[1];
+      }
+
+      if (valideNumber(inputPhone1.value) && valideText(inputName3.value)) {
+        postData(body,
+          () => {
+            statusMessage.textContent = successMessage;
+          },
+          error => {
+            statusMessage.textContent = errorMessage;
+            console.error(error);
+          }
+        );
+        inputName3.value = "";
+        inputEmail3.value = "";
+        inputPhone3.value = "";
+      } else {
+        statusMessage.textContent = invalidInputaMessage;
+      }
+    });
+  };
+
+  sendForm();
 });
