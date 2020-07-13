@@ -385,25 +385,23 @@ window.addEventListener("DOMContentLoaded", () => {
     statusMessage.textContent = "Message!";
     statusMessage.style.cssText = "font-size-2rem;";
 
-    const postData = (body, outputData, errorData) => {
-      const request = new XMLHttpRequest();
+    const postData = body => new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.addEventListener("readystatechange", () => {
+          if (request.readyState !== 4) {
+            return;
+          }
+       if (request.status === 200) {
+            resolve(request);
+          } else {
+            reject(request.status);
+          }
+        });
 
-      request.addEventListener("readystatechange", () => {
-        if (request.readyState !== 4) {
-          return;
-        }
-
-        if (request.status === 200) {
-          outputData();
-        } else {
-          errorData(request.status);
-        }
+        request.open("POST", "./server.php");
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(body));
       });
-
-      request.open("POST", "./server.php");
-      request.setRequestHeader("Content-Type", "application/json");
-      request.send(JSON.stringify(body));
-    };
 
     form1.addEventListener("submit", event => {
       event.preventDefault();
@@ -417,15 +415,14 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       if (valideNumber(inputPhone1.value) && valideText(inputName1.value)) {
-        postData(body,
-          () => {
-            statusMessage.textContent = successMessage;
-          },
-          error => {
-            statusMessage.textContent = errorMessage;
-            console.error(error);
-          }
-        );
+
+      postData(body)
+        .then(() => {
+          statusMessage.textContent = successMessage;
+        })
+        .catch((error) => {
+          statusMessage.textContent = errorMessage;
+        });
         inputName1.value = "";
         inputEmail1.value = "";
         inputPhone1.value = "";
@@ -445,15 +442,13 @@ window.addEventListener("DOMContentLoaded", () => {
         body[val[0]] = val[1];
       }
       if (valideNumber(inputPhone2.value) && valideText(inputName2.value) && valideText(inputMessage2.value)) {
-        postData(body,
-          () => {
-            statusMessage.textContent = successMessage;
-          },
-          error => {
-            statusMessage.textContent = errorMessage;
-            console.error(error);
-          }
-        );
+        postData(body)
+        .then(() => {
+          statusMessage.textContent = successMessage;
+        })
+        .catch(error => {
+          statusMessage.textContent = errorMessage;
+        });
         inputName2.value = "";
         inputEmail2.value = "";
         inputPhone2.value = "";
@@ -475,16 +470,14 @@ window.addEventListener("DOMContentLoaded", () => {
         body[val[0]] = val[1];
       }
 
-      if (valideNumber(inputPhone1.value) && valideText(inputName3.value)) {
-        postData(body,
-          () => {
-            statusMessage.textContent = successMessage;
-          },
-          error => {
-            statusMessage.textContent = errorMessage;
-            console.error(error);
-          }
-        );
+      if (valideNumber(inputPhone3.value) && valideText(inputName3.value)) {
+        postData(body)
+        .then(() => {
+          statusMessage.textContent = successMessage;
+        })
+        .catch(error => {
+          statusMessage.textContent = errorMessage;
+        });
         inputName3.value = "";
         inputEmail3.value = "";
         inputPhone3.value = "";
