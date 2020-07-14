@@ -385,23 +385,16 @@ window.addEventListener("DOMContentLoaded", () => {
     statusMessage.textContent = "Message!";
     statusMessage.style.cssText = "font-size-2rem;";
 
-    const postData = body => new Promise((resolve, reject) => {
-        const request = new XMLHttpRequest();
-        request.addEventListener("readystatechange", () => {
-          if (request.readyState !== 4) {
-            return;
-          }
-       if (request.status === 200) {
-            resolve(request);
-          } else {
-            reject(request.status);
-          }
-        });
-
-        request.open("POST", "./server.php");
-        request.setRequestHeader("Content-Type", "application/json");
-        request.send(JSON.stringify(body));
+    const postData = body => {
+      return fetch("./server.php", {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body),
       });
+    };
+
 
     form1.addEventListener("submit", event => {
       event.preventDefault();
@@ -417,7 +410,10 @@ window.addEventListener("DOMContentLoaded", () => {
       if (valideNumber(inputPhone1.value) && valideText(inputName1.value)) {
 
       postData(body)
-        .then(() => {
+        .then(response => {
+          if (response.status !== 200) {
+            throw new Error('status network is not 200');
+          }
           statusMessage.textContent = successMessage;
         })
         .catch((error) => {
@@ -443,7 +439,10 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       if (valideNumber(inputPhone2.value) && valideText(inputName2.value) && valideText(inputMessage2.value)) {
         postData(body)
-        .then(() => {
+        .then(response => {
+          if (response.status !== 200) {
+            throw new Error('status network is not 200');
+          }
           statusMessage.textContent = successMessage;
         })
         .catch(error => {
@@ -472,7 +471,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
       if (valideNumber(inputPhone3.value) && valideText(inputName3.value)) {
         postData(body)
-        .then(() => {
+        .then(response => {
+          if (response.status !== 200) {
+            throw new Error('status network is not 200');
+          }
           statusMessage.textContent = successMessage;
         })
         .catch(error => {
