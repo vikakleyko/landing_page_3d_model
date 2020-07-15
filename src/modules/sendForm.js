@@ -7,7 +7,7 @@
 // eslint-disable-next-line no-unused-vars
 const sendForm = () => {
   const valideNumber = number => {
-    const phonePattern = /^[+]?\d+$/;
+    const phonePattern = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
     return !!(number && number.match(phonePattern));
   };
 
@@ -34,10 +34,13 @@ const sendForm = () => {
     inputName3 = document.getElementById("form3-name"),
     inputEmail3 = document.getElementById("form3-email"),
     inputPhone3 = document.getElementById("form3-phone");
-
   const statusMessage = document.createElement("div");
   statusMessage.textContent = "Message!";
   statusMessage.style.cssText = "font-size-2rem;";
+
+  const timerToClearMessage = () => setTimeout(() => {
+    statusMessage.textContent = "";
+  }, 8000);
 
   const postData = body => {
     return fetch("./server.php", {
@@ -60,7 +63,9 @@ const sendForm = () => {
       body[val[0]] = val[1];
     }
 
+
     if (valideNumber(inputPhone1.value) && valideText(inputName1.value)) {
+      timerToClearMessage();
       postData(body)
         .then(response => {
           if (response.status !== 200) {
@@ -89,11 +94,13 @@ const sendForm = () => {
     for (let val of formData.entries()) {
       body[val[0]] = val[1];
     }
+
     if (
       valideNumber(inputPhone2.value) &&
       valideText(inputName2.value) &&
       valideText(inputMessage2.value)
     ) {
+      timerToClearMessage();
       postData(body)
         .then(response => {
           if (response.status !== 200) {
@@ -126,6 +133,7 @@ const sendForm = () => {
     }
 
     if (valideNumber(inputPhone3.value) && valideText(inputName3.value)) {
+      timerToClearMessage();
       postData(body)
         .then(response => {
           if (response.status !== 200) {
