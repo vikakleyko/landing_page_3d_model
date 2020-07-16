@@ -7,10 +7,10 @@
 // eslint-disable-next-line no-unused-vars
 const sendForm = () => {
   const valideNumber = number => {
-    const phonePattern = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
+    const phonePattern = /^[+]?\d{10}/;
     return !!(number && number.match(phonePattern));
   };
-
+  //   /^[+]?\d+$/
   const valideText = text => {
     const textPattern = /^[\u0400-\u04FF ]+$/;
     return !!(text && text.match(textPattern));
